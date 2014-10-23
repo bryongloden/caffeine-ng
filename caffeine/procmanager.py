@@ -49,5 +49,5 @@ class ProcManager:
 
     def save(self):
         self.proc_list.sort()
-        with open(self.whitelist_file, "w") as f:
-            f.write("\n".join(self.proc_list))
+        with open(self.whitelist_file, 'w') as f:
+            f.write('\n'.join(self.proc_list))

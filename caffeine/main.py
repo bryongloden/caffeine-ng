@@ -52,13 +52,13 @@ logger = logging.getLogger(__name__)
 
 icon_theme = Gtk.IconTheme.get_default()
 try:
-    generic = icon_theme.load_icon("application-x-executable", 16,
+    generic = icon_theme.load_icon('application-x-executable', 16,
                                    Gtk.IconLookupFlags.NO_SVG)
 except GObject.GError:
     generic = \
         GdkPixbuf.Pixbuf.new_from_file(GENERIC_PROCESS_ICON_PATH)
 
-cached_icons = {"generic": generic}
+cached_icons = {'generic': generic}
 
 
 def get_icon_for_process(proc_name):
@@ -66,12 +66,12 @@ def get_icon_for_process(proc_name):
     global cached_icons
     global generic
 
-    possible_icon_names = proc_name.split("-")
+    possible_icon_names = proc_name.split('-')
     possible_icon_names.insert(0, proc_name)
 
     for icon_name in possible_icon_names:
 
-        icon_name = icon_name.split("/")[-1]
+        icon_name = icon_name.split('/')[-1]
 
         # Check to see if we have loaded this already.
         try:
@@ -87,7 +87,7 @@ def get_icon_for_process(proc_name):
         except GObject.GError:
             cached_icons[icon_name] = generic
 
-    return cached_icons["generic"]
+    return cached_icons['generic']
 
 
 
@@ -99,19 +99,19 @@ class ProcAdd:
         self.user_set = True
 
         builder = Gtk.Builder()
-        builder.add_from_file(os.path.join(GLADE_PATH, "proc.glade"))
+        builder.add_from_file(os.path.join(GLADE_PATH, 'proc.glade'))
 
         get = builder.get_object
 
-        self.dialog = get("dialog")
-        self.entry = get("entry")
+        self.dialog = get('dialog')
+        self.entry = get('entry')
         self.entry.grab_focus()
 
         builder.connect_signals(self)
 
     def run(self):
 
-        self.entry.set_text("")
+        self.entry.set_text('')
 
         response = self.dialog.run()
         self.hide()
@@ -140,7 +140,7 @@ class GUI:
     def __init__(self, show_preferences=False):
         self.Core = core.Caffeine()
 
-        self.Core.connect("activation-toggled",
+        self.Core.connect('activation-toggled',
                           self.on_activation_toggled)
         self.ProcAdd = ProcAdd()
 
@@ -150,19 +150,19 @@ class GUI:
         settings = Gio.Settings.new(BASE_KEY)
 
         builder = Gtk.Builder()
-        builder.add_from_file(os.path.join(GLADE_PATH, "GUI.glade"))
+        builder.add_from_file(os.path.join(GLADE_PATH, 'GUI.glade'))
 
         # It can be tiresome to have to type builder.get_object
         # again and again
         get = builder.get_object
 
-        show_tray_icon = settings.get_boolean("show-tray-icon")
-        show_notification = settings.get_boolean("show-notification")
+        show_tray_icon = settings.get_boolean('show-tray-icon')
+        show_notification = settings.get_boolean('show-notification')
 
         if appindicator_avail:
             self.AppInd = \
-                AppIndicator3.Indicator.new("caffeine-cup-empty",
-                                            "caffeine",
+                AppIndicator3.Indicator.new('caffeine-cup-empty',
+                                            'caffeine',
                                             AppIndicator3.IndicatorCategory.
                                             APPLICATION_STATUS)
 
@@ -174,31 +174,31 @@ class GUI:
             # status icon must be a instance variable  (ie self.)or else it
             # gets thrown out with the garbage, and won't be seen.
 
-            self.status_icon = get("statusicon")
+            self.status_icon = get('statusicon')
             self.status_icon.set_visible(show_tray_icon)
 
         if show_tray_icon is False and show_notification is True and \
            show_preferences is False:
             note = \
-                Notification(_("Caffeine is running"),
-                             _("To show the tray icon, \nrun ") +
-                             "'caffeine -p' " +
-                             _("or open Caffeine Preferences from " +
-                               "your system menu."), "caffeine")
+                Notification(_('Caffeine is running'),
+                             _('To show the tray icon, \nrun ') +
+                             '"caffeine -p" ' +
+                             _('or open Caffeine Preferences from ' +
+                               'your system menu.'), 'caffeine')
 
             note.show()
 
-        self.activate_menuitem = get("activate_menuitem")
+        self.activate_menuitem = get('activate_menuitem')
 
         self.set_icon_is_activated(self.Core.getActivated())
 
         tooltip = self.Core.status_string
         if not tooltip:
-            tooltip = _("Caffeine is dormant; powersaving is enabled")
+            tooltip = _('Caffeine is dormant; powersaving is enabled')
         # self.status_icon.set_tooltip(tooltip)
 
         # popup menu
-        self.menu = get("popup_menu")
+        self.menu = get('popup_menu')
         self.menu.show()
 
         if appindicator_avail:
@@ -208,21 +208,21 @@ class GUI:
         #
         # configuration window widgets
         #
-        proc_treeview = get("treeview")
+        proc_treeview = get('treeview')
         self.selection = proc_treeview.get_selection()
         self.selection.set_mode(Gtk.SelectionMode.MULTIPLE)
 
-        self.proc_liststore = get("proc_liststore")
+        self.proc_liststore = get('proc_liststore')
         for line in open(WHITELIST):
             name = line.strip()
             self.proc_liststore.append([get_icon_for_process(name), name])
 
-        # time_menuitem = get("time_menuitem")
+        # time_menuitem = get('time_menuitem')
 
         # time_menuitem.set_submenu(submenu)
 
         # Preferences editor.
-        self.window = get("window")
+        self.window = get('window')
 
         # set the icons for the window border.
         self.window.set_default_icon_list([get_icon_pixbuf(16),
@@ -230,35 +230,35 @@ class GUI:
                                            get_icon_pixbuf(32),
                                            get_icon_pixbuf(48)])
 
-        self.trayicon_cb = get("trayicon_cbutton")
-        self.notification_cb = get("notification_cbutton")
+        self.trayicon_cb = get('trayicon_cbutton')
+        self.notification_cb = get('notification_cbutton')
 
         self.notification_cb.set_sensitive(not show_tray_icon)
 
-        settings.connect("changed::show-tray-icon", self.on_trayicon_changed)
-        settings.connect("changed::show-notification",
+        settings.connect('changed::show-tray-icon', self.on_trayicon_changed)
+        settings.connect('changed::show-notification',
                          self.on_notification_changed)
 
-        settings.bind("show-tray-icon", self.trayicon_cb, "active",
+        settings.bind('show-tray-icon', self.trayicon_cb, 'active',
                       Gio.SettingsBindFlags.DEFAULT)
-        settings.bind("show-notification", self.notification_cb, "active",
+        settings.bind('show-notification', self.notification_cb, 'active',
                       Gio.SettingsBindFlags.DEFAULT)
 
         # about dialog
-        self.about_dialog = get("aboutdialog")
-        self.about_dialog.set_translator_credits(_("translator-credits"))
+        self.about_dialog = get('aboutdialog')
+        self.about_dialog.set_translator_credits(_('translator-credits'))
 
         # other time selector
-        self.othertime_dialog = get("othertime_dialog")
-        self.othertime_hours = get("hours_spin")
-        self.othertime_minutes = get("minutes_spin")
+        self.othertime_dialog = get('othertime_dialog')
+        self.othertime_hours = get('hours_spin')
+        self.othertime_minutes = get('minutes_spin')
 
         if appindicator_avail is False:
             # Handle mouse clicks on status_icon
             # left click
-            self.status_icon.connect("activate", self.on_L_click)
+            self.status_icon.connect('activate', self.on_L_click)
             # right click
-            self.status_icon.connect("popup-menu", self.on_R_click)
+            self.status_icon.connect('popup-menu', self.on_R_click)
 
         builder.connect_signals(self)
 
@@ -278,19 +278,19 @@ class GUI:
 
     def set_icon_is_activated(self, activated):
         # toggle the icon, indexing with a bool.
-        icon_name = ["caffeine-cup-empty", "caffeine-cup-full"][activated]
+        icon_name = ['caffeine-cup-empty', 'caffeine-cup-full'][activated]
 
         if appindicator_avail:
             self.AppInd.set_icon(icon_name)
         else:
             self.status_icon.set_from_icon_name(icon_name)
 
-        label = [_("Disable Screensaver"), _("Enable Screensaver")]
+        label = [_('Disable Screensaver'), _('Enable Screensaver')]
         self.activate_menuitem.set_label(label[self.Core.getActivated()])
 
     # Callbacks
     def on_L_click(self, status_icon, data=None):
-        logger.info("User has clicked the Caffeine icon")
+        logger.info('User has clicked the Caffeine icon')
         self.toggleActivated()
 
     def on_R_click(self, status_icon, mbutton, time, data=None):
@@ -350,7 +350,7 @@ class GUI:
     def on_activate_menuitem_activate(self, menuitem, data=None):
         self.toggleActivated()
 
-        label = [_("Disable Screensaver"), _("Enable Screensaver")]
+        label = [_('Disable Screensaver'), _('Enable Screensaver')]
         menuitem.set_label(label[self.Core.getActivated()])
 
     def on_time_menuitem_activate(self, menuitem, data=None):
@@ -385,7 +385,7 @@ class GUI:
 
     def quit(self):
         # Do anything that needs to be done before quitting.
-        logger.info("Caffeine is preparing to quit")
+        logger.info('Caffeine is preparing to quit')
 
         # Make sure PM and SV is uninhibited
         self.Core.setActivated(False)
@@ -412,26 +412,26 @@ def main():
     if app.is_running():
         app.kill()
 
-    main = GUI(arguments["--preferences"])
-    if arguments["--activate"]:
+    main = GUI(arguments['--preferences'])
+    if arguments['--activate']:
         main.setActive(True)
 
-    if arguments["--activate"] and arguments["--time"]:
-        parts = arguments["time"].split(":")
+    if arguments['--activate'] and arguments['--time']:
+        parts = arguments['time'].split(':')
         if len(parts) != 2:
-            print("-t argument must be in the hour:minute format.")
+            print('-t argument must be in the hour:minute format.')
             sys.exit(2)
 
         try:
             hours = int(parts[0])
             minutes = int(parts[1])
         except:
-            print("Invalid time argument.")
+            print('Invalid time argument.')
             sys.exit(2)
 
         main.timedActivation((hours * 3600.0)+(minutes * 60.0))
 
-    if arguments["--preferences"]:
+    if arguments['--preferences']:
         main.window.show_all()
 
     app.write_pid_file()

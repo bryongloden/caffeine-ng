@@ -31,14 +31,14 @@ from . import procmanager
 SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 BASE_PATH = os.path.abspath(os.path.join(SCRIPT_PATH, os.pardir))
 DATA_DIR = save_data_path('caffeine')
-BASE_KEY = "net.launchpad.caffeine"
+BASE_KEY = 'net.launchpad.caffeine'
 
 LOG_FILE = os.path.join(DATA_DIR, 'caffeine.log')
 WHITELIST = os.path.join(DATA_DIR, 'whitelist.txt')
 
 # Create an empty file if it doesn't exist.
-if not os.path.isfile(WHITELIST):
-    open(WHITELIST, "w").close()
+if not os.path.exists(WHITELIST):
+    open(WHITELIST, 'w').close()
 
 
 logger = logging.getLogger(__name__)
@@ -64,10 +64,10 @@ ICON_PATH = join(BASE_PATH, 'share', 'icons')
 
 _desktop_file = join(BASE_PATH, 'share', 'applications', 'caffeine.desktop')
 
-FULL_ICON_PATH = join(IMAGE_PATH, "Full_Cup.svg")
-EMPTY_ICON_PATH = join(IMAGE_PATH, "Empty_Cup.svg")
+FULL_ICON_PATH = join(IMAGE_PATH, 'Full_Cup.svg')
+EMPTY_ICON_PATH = join(IMAGE_PATH, 'Empty_Cup.svg')
 
-GENERIC_PROCESS_ICON_PATH = join(IMAGE_PATH, "application-x-executable.png")
+GENERIC_PROCESS_ICON_PATH = join(IMAGE_PATH, 'application-x-executable.png')
 
 ICON_NAME = 'caffeine'
 icon_theme = Gtk.IconTheme.get_default()
@@ -99,8 +99,8 @@ def get_icon_pixbuf(size):
 
 
 def __init_translations():
-    GETTEXT_DOMAIN = "caffeine"
-    LOCALE_PATH = os.path.join(BASE_PATH, "share", "locale")
+    GETTEXT_DOMAIN = 'caffeine'
+    LOCALE_PATH = os.path.join(BASE_PATH, 'share', 'locale')
 
     locale.setlocale(locale.LC_ALL, '')
 

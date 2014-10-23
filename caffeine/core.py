@@ -44,7 +44,7 @@ class Caffeine(GObject.GObject):
         self.ProcMan = caffeine.get_ProcManager()
 
         # Status string.
-        self.status_string = ""
+        self.status_string = ''
 
         # Makes sure that only one instance of Caffeine is run for
         # each user on the system.
@@ -109,9 +109,9 @@ class Caffeine(GObject.GObject):
 
         # No process in the list is running, deactivate.
         if not activate and self.preventedForProcess:
-            logger.info("Caffeine had previously auto-activated for a " +
-                        "process, but that process is no longer running; " +
-                        "deactivating...")
+            logger.info('Caffeine had previously auto-activated for a ' +
+                        'process, but that process is no longer running; ' +
+                        'deactivating...')
             self.setActivated(False)
 
         return True
@@ -126,11 +126,11 @@ class Caffeine(GObject.GObject):
         if self.dbusDetectionTimer:
             self.dbusDetectionTimer.cancel()
 
-    def _notify(self, message, icon, title="Caffeine"):
+    def _notify(self, message, icon, title='Caffeine'):
         """Easy way to use pynotify"""
         try:
 
-            Notify.init("Caffeine")
+            Notify.init('Caffeine')
             if self.note:
                 self.note.update(title, message, icon)
             else:
@@ -144,14 +144,14 @@ class Caffeine(GObject.GObject):
 
             if self.screenSaverCookie is not None and self.sleepIsPrevented:
                 self.screenSaverCookie = \
-                    self.ssProxy.Inhibit("Caffeine",
-                                         "User has requested that Caffeine " +
-                                         "disable the screen saver")
+                    self.ssProxy.Inhibit('Caffeine',
+                                         'User has requested that Caffeine ' +
+                                         'disable the screen saver')
 
         except Exception as e:
-            logger.error("Exception occurred:\n" + " " + str(e))
-            logger.error("Exception occurred attempting to display " +
-                         "message:\n" + message)
+            logger.error('Exception occurred:\n' + ' ' + str(e))
+            logger.error('Exception occurred attempting to display ' +
+                         'message:\n' + message)
         finally:
             return False
 
@@ -162,15 +162,15 @@ class Caffeine(GObject.GObject):
         """Calls toggleActivated after the number of seconds
         specified by time has passed.
         """
-        message = (_("Timed activation set; ") +
-                   _("Caffeine will prevent powersaving for the next ") +
+        message = (_('Timed activation set; ') +
+                   _('Caffeine will prevent powersaving for the next ') +
                    str(time))
 
-        logger.info("Timed activation set for " + str(time))
+        logger.info('Timed activation set for ' + str(time))
 
-        if self.status_string == "":
-            self.status_string = _("Activated for ")+str(time)
-            self.emit("activation-toggled", self.getActivated(),
+        if self.status_string == '':
+            self.status_string = _('Activated for ')+str(time)
+            self.emit('activation-toggled', self.getActivated(),
                       self.status_string)
 
         self.setActivated(True, note)
@@ -181,10 +181,10 @@ class Caffeine(GObject.GObject):
         # and deactivate after time has passed.
         # Stop already running timer
         if self.timer:
-            logger.info("Previous timed activation cancelled due to a " +
-                        "second timed activation request (was set for " +
-                        str(self.timer.interval) + " or " +
-                        str(time)+" seconds )")
+            logger.info('Previous timed activation cancelled due to a ' +
+                        'second timed activation request (was set for ' +
+                        str(self.timer.interval) + ' or ' +
+                        str(time)+' seconds )')
             self.timer.cancel()
 
         self.timer = threading.Timer(time, self._deactivate, args=[note])
@@ -212,20 +212,20 @@ class Caffeine(GObject.GObject):
             # sleep prevention was on now turn it off
 
             self.sleepAppearsPrevented = False
-            logger.info("Caffeine is now dormant; powersaving is re-enabled")
+            logger.info('Caffeine is now dormant; powersaving is re-enabled')
             self.status_string = \
-                _("Caffeine is dormant; powersaving is enabled")
+                _('Caffeine is dormant; powersaving is enabled')
 
             # If the user clicks on the full coffee-cup to disable
             # sleep prevention, it should also
             # cancel the timer for timed activation.
 
-            if self.timer is not None and self.timer.name != "Expired":
-                message = (_("Timed activation cancelled (was set for ") +
-                           str(self.timer.interval) + ")")
+            if self.timer is not None and self.timer.name != 'Expired':
+                message = (_('Timed activation cancelled (was set for ') +
+                           str(self.timer.interval) + ')')
 
-                logger.info("Timed activation cancelled (was set for " +
-                             tr(self.timer.interval) + ")")
+                logger.info('Timed activation cancelled (was set for ' +
+                             tr(self.timer.interval) + ')')
 
                 if note:
                     self._notify(message, caffeine.EMPTY_ICON_PATH)
@@ -233,13 +233,13 @@ class Caffeine(GObject.GObject):
                 self.timer.cancel()
                 self.timer = None
 
-            elif self.timer is not None and self.timer.name == "Expired":
+            elif self.timer is not None and self.timer.name == 'Expired':
                 message = (str(self.timer.interval) +
-                           _(" have elapsed; powersaving is re-enabled"))
+                           _(' have elapsed; powersaving is re-enabled'))
 
-                logger.info("Timed activation period (" +
+                logger.info('Timed activation period (' +
                             str(self.timer.interval) +
-                            ") has elapsed")
+                            ') has elapsed')
 
                 if note:
                     self._notify(message, caffeine.EMPTY_ICON_PATH)
@@ -253,14 +253,14 @@ class Caffeine(GObject.GObject):
 
         if self.status_string == "":
             if self.screensaverAndPowersavingType is not None:
-                self.status_string = (_("Caffeine is preventing powersaving " +
-                                      "modes and screensaver activation ") +
-                                      "(" + self.screensaverAndPowersavingType
-                                      + ")")
+                self.status_string = (_('Caffeine is preventing powersaving ' +
+                                      'modes and screensaver activation ') +
+                                      '(' + self.screensaverAndPowersavingType
+                                      + ')')
 
-        self.emit("activation-toggled", self.getActivated(),
+        self.emit('activation-toggled', self.getActivated(),
                   self.status_string)
-        self.status_string = ""
+        self.status_string = ''
 
     def _detectScreensaverAndPowersavingType(self):
         """This method always runs when the first attempt to inhibit the
@@ -268,18 +268,18 @@ class Caffeine(GObject.GObject):
         screensaver/powersaving software is running.  After detection is
         complete, it will finish the inhibiting process."""
 
-        logger.info("Attempting to detect screensaver/powersaving type... ("
+        logger.info('Attempting to detect screensaver/powersaving type... ('
                     + str(self.dbusDetectionFailures) +
-                    " dbus failures so far)")
+                    ' dbus failures so far)')
         bus = dbus.SessionBus()
 
         if 'org.gnome.SessionManager' in bus.list_names() and \
-           utils.isProcessRunning("gnome-screensaver"):
-            self.screensaverAndPowersavingType = "Gnome3"
+           utils.isProcessRunning('gnome-screensaver'):
+            self.screensaverAndPowersavingType = 'Gnome3'
 
         elif 'org.freedesktop.ScreenSaver' in bus.list_names() and \
              'org.freedesktop.PowerManagement.Inhibit' in bus.list_names():
-            self.screensaverAndPowersavingType = "KDE"
+            self.screensaverAndPowersavingType = 'KDE'
         else:
             self.dbusDetectionFailures += 1
             if self.dbusDetectionFailures <= 3:
@@ -292,16 +292,16 @@ class Caffeine(GObject.GObject):
                 # At this point, all attempts to connect to the relevant dbus
                 # interfaces have failed.  This user must be using something
                 # other than the Gnome or KDE screensaver programs.
-                if utils.isProcessRunning("xscreensaver"):
-                    self.screensaverAndPowersavingType = "XSS+DPMS"
+                if utils.isProcessRunning('xscreensaver'):
+                    self.screensaverAndPowersavingType = 'XSS+DPMS'
                 else:
-                    self.screensaverAndPowersavingType = "DPMS"
+                    self.screensaverAndPowersavingType = 'DPMS'
 
         self.attemptingToDetect = False
         self.dbusDetectionFailures = 0
         self.dbusDetectionTimer = None
 
-        logger.info("Successfully detected screensaver and powersaving type: "
+        logger.info('Successfully detected screensaver and powersaving type: '
                     + str(self.screensaverAndPowersavingType))
 
         if self.sleepAppearsPrevented != self.sleepIsPrevented:
@@ -316,21 +316,21 @@ class Caffeine(GObject.GObject):
                 self._detectScreensaverAndPowersavingType()
             return
 
-        if self.screensaverAndPowersavingType == "Gnome":
+        if self.screensaverAndPowersavingType == 'Gnome':
             self._toggleGnome()
-        if self.screensaverAndPowersavingType == "Gnome3":
+        if self.screensaverAndPowersavingType == 'Gnome3':
             self._toggleGnome3()
-        elif self.screensaverAndPowersavingType == "KDE":
+        elif self.screensaverAndPowersavingType == 'KDE':
             self._toggleKDE()
-        elif self.screensaverAndPowersavingType == "XSS+DPMS":
+        elif self.screensaverAndPowersavingType == 'XSS+DPMS':
             self._toggleXSSAndDPMS()
-        elif self.screensaverAndPowersavingType == "DPMS":
+        elif self.screensaverAndPowersavingType == 'DPMS':
             self._toggleDPMS()
 
         if self.sleepIsPrevented is False:
-            logger.info("Caffeine is now preventing powersaving modes" +
-                        " and screensaver activation (" +
-                        self.screensaverAndPowersavingType + ")")
+            logger.info('Caffeine is now preventing powersaving modes' +
+                        ' and screensaver activation (' +
+                        self.screensaverAndPowersavingType + ')')
 
         self.sleepIsPrevented = not self.sleepIsPrevented
 
@@ -347,9 +347,9 @@ class Caffeine(GObject.GObject):
                 self.susuProxy.Uninhibit(self.screenSaverCookie)
         else:
             self.screenSaverCookie = \
-                self.susuProxy.Inhibit("Caffeine", dbus.UInt32(0),
-                                       "User has requested that Caffeine " +
-                                       "disable the screen saver",
+                self.susuProxy.Inhibit('Caffeine', dbus.UInt32(0),
+                                       'User has requested that Caffeine ' +
+                                       'disable the screen saver',
                                        dbus.UInt32(8))
 
     def _toggleKDE(self):
@@ -369,11 +369,11 @@ class Caffeine(GObject.GObject):
                 pmProxy.UnInhibit(self.powerManagementCookie)
         else:
             self.powerManagementCookie = \
-                pmProxy.Inhibit("Caffeine", "User has requested that " +
-                                "Caffeine disable the powersaving modes")
+                pmProxy.Inhibit('Caffeine', 'User has requested that ' +
+                                'Caffeine disable the powersaving modes')
             self.screenSaverCookie = \
-                self.ssProxy.Inhibit("Caffeine", "User has requested " +
-                                     "that Caffeine disable the screen saver")
+                self.ssProxy.Inhibit('Caffeine', 'User has requested ' +
+                                     'that Caffeine disable the screen saver')
 
     def _toggleXSSAndDPMS(self):
         self._toggleXSS()
@@ -382,11 +382,11 @@ class Caffeine(GObject.GObject):
     def _toggleDPMS(self):
         """Toggle the DPMS powersaving subsystem."""
         if self.sleepIsPrevented:
-            subprocess.getoutput("xset +dpms")
-            subprocess.getoutput("xset s on")
+            subprocess.getoutput('xset +dpms')
+            subprocess.getoutput('xset s on')
         else:
-            subprocess.getoutput("xset -dpms")
-            subprocess.getoutput("xset s off")
+            subprocess.getoutput('xset -dpms')
+            subprocess.getoutput('xset s off')
 
     def _toggleXSS(self):
         """Toggle whether XScreensaver is activated (powersaving is
@@ -405,9 +405,9 @@ class Caffeine(GObject.GObject):
         else:
             def deactivate():
                 try:
-                    subprocess.getoutput("xscreensaver-command -deactivate")
+                    subprocess.getoutput('xscreensaver-command -deactivate')
                 except Exception as data:
-                    logger.error("Exception occurred:\n" + data)
+                    logger.error('Exception occurred:\n' + data)
                 return True
 
             # reset the idle timer every 50 seconds.
@@ -415,5 +415,5 @@ class Caffeine(GObject.GObject):
 
 
 # register a signal
-GObject.signal_new("activation-toggled", Caffeine,
+GObject.signal_new('activation-toggled', Caffeine,
                    GObject.SignalFlags.RUN_FIRST, None, [bool, str])
