@@ -18,39 +18,38 @@
 
 import gettext
 import locale
+import logging
 import os
 from os.path import join, abspath, dirname, pardir
 from gi.repository import Gtk
-from xdg.BaseDirectory import xdg_config_home
+from xdg.BaseDirectory import save_data_path
 from . import procmanager
 
 
-def get_base_path():
-    c = abspath(dirname(__file__))
-    while True:
-        if os.path.exists(os.path.join(c, "bin")) and \
-           os.path.exists(os.path.join(c, "share/caffeine")):
-            return c
-
-        c = join(c, pardir)
-        if not os.path.exists(c):
-            raise Exception("Can't determine BASE_PATH")
-
-BASE_PATH = get_base_path()
+# http://stackoverflow.com/a/9350788/2587286
+# http://stackoverflow.com/a/2860193/2587286
+SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
+BASE_PATH = os.path.abspath(os.path.join(SCRIPT_PATH, os.pardir))
+DATA_DIR = save_data_path('caffeine')
 BASE_KEY = "net.launchpad.caffeine"
 
-config_dir = os.path.join(xdg_config_home, "caffeine")
+LOG_FILE = os.path.join(DATA_DIR, 'caffeine.log')
+WHITELIST = os.path.join(DATA_DIR, 'whitelist.txt')
 
-if not os.path.exists(config_dir):
-    os.makedirs(config_dir)
-
-# Log file.
-LOG = os.path.join(config_dir, "log")
-WHITELIST = os.path.join(config_dir, "whitelist.txt")
-# create file if it doesn't exist
+# Create an empty file if it doesn't exist.
 if not os.path.isfile(WHITELIST):
     open(WHITELIST, "w").close()
 
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler(LOG_FILE)
+ch = logging.StreamHandler()
+f = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(f)
+ch.setFormatter(f)
+logger.addHandler(fh)
+logger.addHandler(ch)
 
 _ProcMan = procmanager.ProcManager()
 

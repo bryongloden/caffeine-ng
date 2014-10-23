@@ -47,6 +47,8 @@ try:
 except ImportError:
     appindicator_avail = False
 
+logger = logging.getLogger(__name__)
+
 
 icon_theme = Gtk.IconTheme.get_default()
 try:
@@ -86,6 +88,7 @@ def get_icon_for_process(proc_name):
             cached_icons[icon_name] = generic
 
     return cached_icons["generic"]
+
 
 
 class ProcAdd:
@@ -287,7 +290,7 @@ class GUI:
 
     # Callbacks
     def on_L_click(self, status_icon, data=None):
-        logging.info("User has clicked the Caffeine icon")
+        logger.info("User has clicked the Caffeine icon")
         self.toggleActivated()
 
     def on_R_click(self, status_icon, mbutton, time, data=None):
@@ -382,7 +385,7 @@ class GUI:
 
     def quit(self):
         # Do anything that needs to be done before quitting.
-        logging.info("Caffeine is preparing to quit")
+        logger.info("Caffeine is preparing to quit")
 
         # Make sure PM and SV is uninhibited
         self.Core.setActivated(False)

@@ -30,7 +30,7 @@ from . import utils
 from .applicationinstance import ApplicationInstance
 
 
-logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 os.chdir(os.path.abspath(os.path.dirname(__file__)))
 
 
@@ -97,21 +97,21 @@ class Caffeine(GObject.GObject):
                 activate = True
 
                 if self.preventedForProcess or not self.getActivated():
-                    logging.info("Caffeine has detected that the process '" +
-                                 proc + "' is running, and will auto-activate")
+                    logger.info("Caffeine has detected that the process '" +
+                                proc + "' is running, and will auto-activate")
                     self.setActivated(True)
                     self.preventedForProcess = True
                 else:
-                    logging.info("Caffeine has detected that the process '" +
-                                 proc + "' is running, but will NOT auto-" +
-                                 "-activate as Caffeine has already been " +
-                                 "activated for a different reason.")
+                    logger.info("Caffeine has detected that the process '" +
+                                proc + "' is running, but will NOT auto-" +
+                                "-activate as Caffeine has already been " +
+                                "activated for a different reason.")
 
         # No process in the list is running, deactivate.
         if not activate and self.preventedForProcess:
-            logging.info("Caffeine had previously auto-activated for a " +
-                         "process, but that process is no longer running; " +
-                         "deactivating...")
+            logger.info("Caffeine had previously auto-activated for a " +
+                        "process, but that process is no longer running; " +
+                        "deactivating...")
             self.setActivated(False)
 
         return True
@@ -149,9 +149,9 @@ class Caffeine(GObject.GObject):
                                          "disable the screen saver")
 
         except Exception as e:
-            logging.error("Exception occurred:\n" + " " + str(e))
-            logging.error("Exception occurred attempting to display " +
-                          "message:\n" + message)
+            logger.error("Exception occurred:\n" + " " + str(e))
+            logger.error("Exception occurred attempting to display " +
+                         "message:\n" + message)
         finally:
             return False
 
@@ -166,7 +166,7 @@ class Caffeine(GObject.GObject):
                    _("Caffeine will prevent powersaving for the next ") +
                    str(time))
 
-        logging.info("Timed activation set for " + str(time))
+        logger.info("Timed activation set for " + str(time))
 
         if self.status_string == "":
             self.status_string = _("Activated for ")+str(time)
@@ -181,10 +181,10 @@ class Caffeine(GObject.GObject):
         # and deactivate after time has passed.
         # Stop already running timer
         if self.timer:
-            logging.info("Previous timed activation cancelled due to a " +
-                         "second timed activation request (was set for " +
-                         str(self.timer.interval) + " or " +
-                         str(time)+" seconds )")
+            logger.info("Previous timed activation cancelled due to a " +
+                        "second timed activation request (was set for " +
+                        str(self.timer.interval) + " or " +
+                        str(time)+" seconds )")
             self.timer.cancel()
 
         self.timer = threading.Timer(time, self._deactivate, args=[note])
@@ -212,7 +212,7 @@ class Caffeine(GObject.GObject):
             # sleep prevention was on now turn it off
 
             self.sleepAppearsPrevented = False
-            logging.info("Caffeine is now dormant; powersaving is re-enabled")
+            logger.info("Caffeine is now dormant; powersaving is re-enabled")
             self.status_string = \
                 _("Caffeine is dormant; powersaving is enabled")
 
@@ -224,8 +224,8 @@ class Caffeine(GObject.GObject):
                 message = (_("Timed activation cancelled (was set for ") +
                            str(self.timer.interval) + ")")
 
-                logging.info("Timed activation cancelled (was set for " +
-                             str(self.timer.interval) + ")")
+                logger.info("Timed activation cancelled (was set for " +
+                             tr(self.timer.interval) + ")")
 
                 if note:
                     self._notify(message, caffeine.EMPTY_ICON_PATH)
@@ -237,9 +237,9 @@ class Caffeine(GObject.GObject):
                 message = (str(self.timer.interval) +
                            _(" have elapsed; powersaving is re-enabled"))
 
-                logging.info("Timed activation period (" +
-                             str(self.timer.interval) +
-                             ") has elapsed")
+                logger.info("Timed activation period (" +
+                            str(self.timer.interval) +
+                            ") has elapsed")
 
                 if note:
                     self._notify(message, caffeine.EMPTY_ICON_PATH)
@@ -268,9 +268,9 @@ class Caffeine(GObject.GObject):
         screensaver/powersaving software is running.  After detection is
         complete, it will finish the inhibiting process."""
 
-        logging.info("Attempting to detect screensaver/powersaving type... ("
-                     + str(self.dbusDetectionFailures) +
-                     " dbus failures so far)")
+        logger.info("Attempting to detect screensaver/powersaving type... ("
+                    + str(self.dbusDetectionFailures) +
+                    " dbus failures so far)")
         bus = dbus.SessionBus()
 
         if 'org.gnome.SessionManager' in bus.list_names() and \
@@ -301,8 +301,8 @@ class Caffeine(GObject.GObject):
         self.dbusDetectionFailures = 0
         self.dbusDetectionTimer = None
 
-        logging.info("Successfully detected screensaver and powersaving type: "
-                     + str(self.screensaverAndPowersavingType))
+        logger.info("Successfully detected screensaver and powersaving type: "
+                    + str(self.screensaverAndPowersavingType))
 
         if self.sleepAppearsPrevented != self.sleepIsPrevented:
             self._performTogglingActions()
@@ -328,9 +328,9 @@ class Caffeine(GObject.GObject):
             self._toggleDPMS()
 
         if self.sleepIsPrevented is False:
-            logging.info("Caffeine is now preventing powersaving modes" +
-                         " and screensaver activation (" +
-                         self.screensaverAndPowersavingType + ")")
+            logger.info("Caffeine is now preventing powersaving modes" +
+                        " and screensaver activation (" +
+                        self.screensaverAndPowersavingType + ")")
 
         self.sleepIsPrevented = not self.sleepIsPrevented
 
@@ -407,7 +407,7 @@ class Caffeine(GObject.GObject):
                 try:
                     subprocess.getoutput("xscreensaver-command -deactivate")
                 except Exception as data:
-                    logging.error("Exception occurred:\n" + data)
+                    logger.error("Exception occurred:\n" + data)
                 return True
 
             # reset the idle timer every 50 seconds.
