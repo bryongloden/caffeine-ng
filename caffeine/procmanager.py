@@ -23,31 +23,28 @@ class ProcManager:
 
     def __init__(self):
         self.whitelist_file = caffeine.WHITELIST
-        self.proc_list = []
+        self.proc_list = set()
 
         if os.path.exists(self.whitelist_file):
             self.import_proc(self.whitelist_file)
 
     def get_process_list(self):
-        return self.proc_list[:]
+        return self.proc_list
 
     def add_proc(self, name):
-        if name not in self.proc_list:
-            self.proc_list.append(name)
+        self.proc_list.add(name)
         self.save()
 
     def remove_proc(self, name):
-        self.proc_list.remove(name)
+        self.proc_list.discard(name)
         self.save()
 
     def import_proc(self, filename):
-        for line in open(filename):
-            line = line.strip()
-            if line not in self.proc_list:
-                self.proc_list.append(line)
+        with open(filename) as f:
+            for line in f:
+                self.proc_list.add(line.strip())
         self.save()
 
     def save(self):
-        self.proc_list.sort()
         with open(self.whitelist_file, 'w') as f:
             f.write('\n'.join(self.proc_list))
